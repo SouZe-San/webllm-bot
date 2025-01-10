@@ -1,5 +1,4 @@
 <script lang="ts">
-  // import ChatBot from "./lib/ChatBot.svelte";
   import ChatBot from "./lib/ChatBot.svelte";
 
   import Navbar from "./lib/Navbar.svelte";

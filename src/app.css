@@ -14,7 +14,6 @@
   color-scheme: light dark;
   background: #f8f8f8;
   color: rgba(0, 0, 0, 0.87);
-  /* background-color: #242424; */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -161,8 +160,6 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-
-  /* border-bottom: 1px solid #e5e7eb; */
 }
 
 .nav-left {

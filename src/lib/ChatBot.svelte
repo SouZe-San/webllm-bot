@@ -6,14 +6,15 @@
     MLCEngine,
   } from "@mlc-ai/web-llm";
   import { onMount } from "svelte";
+
   type messageType = { role: "system" | "user"; content: string };
 
   let isOpen = false;
   let prompt = "";
   let isModeLoad = false;
   let chatWaiting = false;
-
   let modelProgress: string;
+
   let messages: Array<messageType> = [
     {
       content:
@@ -36,26 +37,32 @@
     }
   }
 
-  let selectedName = "Qwen2-0.5B-Instruct-q4f16_1-MLC";
+  // can change model as you want
+  let SELECTED_MODEL = "Qwen2-0.5B-Instruct-q4f16_1-MLC";
   let engine: MLCEngine;
 
   function initProgressCallback(report: { progress: number; timeElapsed: number; text: string }) {
-    console.log("initialize", report);
     modelProgress = report.text;
   }
 
+  // Crate a engine instance
   onMount(async () => {
     engine = new MLCEngine();
     engine.setInitProgressCallback(initProgressCallback);
   });
+
+  // Load Model from cache and load in GPU
   const onDownloadClick = async () => {
+    if ((await engine.getGPUVendor()) === "") {
+      modelProgress = "No GPU founded !!";
+      return;
+    }
     const config = {
       temperature: 1.0,
       top_p: 1,
     };
     try {
-      // console.log(await engine.getMaxStorageBufferBindingSize());
-      await engine.reload(selectedName);
+      await engine.reload(SELECTED_MODEL);
       isModeLoad = true;
       console.log("=============== All Done =====================");
     } catch (error) {
@@ -63,9 +70,9 @@
     }
   };
 
+  // Function for send User prompt to LLM
   const handleSubmit = async (event: Event) => {
     event.preventDefault();
-    console.log("GPU : ", await engine.getGPUVendor());
     if ((await engine.getGPUVendor()) === "") {
       return;
     }
@@ -90,8 +97,6 @@
 
         // Update responses with the AI's reply
         responses = [...responses, reply.choices[0].message];
-        console.log("Messages:", messages);
-        console.log("Choice:", reply.choices[0].message);
       } catch (error) {
         console.error("Error in chat completion", error);
       }
